@@ -39,7 +39,7 @@ ACME_FRONTEND/
 │   │   │   ├── globals.css   # CSS file that apply only in `nfl-teams` route
 │   │   │   ├── layout.tsx    # Layout component that wrap `nfl-teams` route
 │   │   │   └── page.tsx      #  Default page component for /nfl-teams.
-│   │   ├── components/    #  Components specific to this route segment.
+│   │   ├── components/    #  Components specific for shadcn UI.
 │   │   └── lib/      # utility functions for specific route
 └──
 ```
