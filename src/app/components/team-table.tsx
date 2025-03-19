@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -29,6 +29,17 @@ import {
 } from 'lucide-react';
 import { Team } from '@/app/lib/types';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+
+interface TeamTableProps {
+  initialData: Team[];
+}
 
 // Define the columns for the table
 const columns: ColumnDef<Team>[] = [
@@ -94,12 +105,70 @@ const columns: ColumnDef<Team>[] = [
   }
 ];
 
-const TeamTable = ({ data }: { data: Team[] }) => {
+const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filterValue, setFilterValue] = useState('');
+  const [sortBy, setSortBy] = useState<string>('');
+  const [tableData, setTableData] = useState<Team[]>(initialData);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      if (!apiKey) {
+        console.error('API key is not defined in environment variables.');
+        return;
+      }
+      if (!apiUrl) {
+        console.error('API URL is not defined in environment variables.');
+        return;
+      }
+
+      let url = `${apiUrl}/team_list/NFL`;
+      if (sortBy && sortBy !== 'None') {
+        url += `?sort_by=${sortBy}`;
+      }
+
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'X-API-KEY': apiKey,
+            'Content-Type': 'application/json'
+          },
+          cache: 'no-store'
+        });
+
+        if (!response.ok) {
+          let errorMessage = `HTTP error! status: ${response.status}`;
+          if (response.status === 404) {
+            errorMessage = 'NFL team list not found.';
+          } else if (response.status === 401) {
+            errorMessage = 'Unauthorized. Check your API key.';
+          } else if (response.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          }
+          console.error(errorMessage);
+          return;
+        }
+
+        const data: Team[] = await response.json();
+        setTableData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    if (sortBy) {
+      fetchData();
+    } else {
+      setTableData(initialData);
+    }
+  }, [sortBy, initialData]);
 
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -116,14 +185,26 @@ const TeamTable = ({ data }: { data: Team[] }) => {
   return (
     <>
       {/* Table */}
-      <div className="w-[30%] mr-auto mb-2">
+      <div className="flex items-center justify-between w-full mb-2">
         <Input
           id="teamSearch"
           name="teamSearch"
+          className="w-[30%]"
           placeholder="Search teams"
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
         />
+        <Select onValueChange={setSortBy} value={sortBy || ''}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="None">None</SelectItem>
+            <SelectItem value="Name">Name</SelectItem>
+            <SelectItem value="Conference">Conference</SelectItem>
+            <SelectItem value="Division">Division</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="rounded-md border">
         <Table>

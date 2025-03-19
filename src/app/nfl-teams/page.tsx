@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export const revalidate = 600;
 
 // Fetch data at build time (or on-demand revalidation).
-async function fetchNflTeams(): Promise<Team[]> {
+async function fetchNflTeams(sortBy?: string): Promise<Team[]> {
   const apiKey = process.env.NEXT_PUBLIC_API_KEY;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -24,7 +24,14 @@ async function fetchNflTeams(): Promise<Team[]> {
     throw new Error('API URL is not defined in environment variables.');
   }
 
-  const response = await fetch(`${apiUrl}/team_list/NFL`, {
+  let url = `${apiUrl}/team_list/NFL`;
+
+  // Add sort_by query parameter if provided
+  if (sortBy) {
+    url += `?sort_by=${sortBy}`;
+  }
+
+  const response = await fetch(url, {
     method: 'GET',
     headers: {
       'X-API-KEY': apiKey,
@@ -56,6 +63,7 @@ function Loading() {
 export default async function Page() {
   try {
     const teams = await fetchNflTeams();
+
     return (
       <Suspense fallback={<Loading />}>
         <div className="xl:w-[90%] mx-auto">
@@ -65,7 +73,7 @@ export default async function Page() {
             conference and division. Stay updated with the latest team
             information.
           </p>
-          <TeamTable data={teams} />
+          <TeamTable initialData={teams} />
         </div>
       </Suspense>
     );
