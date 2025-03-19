@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Team } from '@/app/lib/types';
+import { Team } from '@/lib/types';
 import TeamTable from '@/app/components/team-table';
 import TeamCards from '@/app/components/team-cards';
 import SchemaOrg from '@/app/components/schema-org';

@@ -27,7 +27,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { Team } from '@/app/lib/types';
+import { Team } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import {
   Select,

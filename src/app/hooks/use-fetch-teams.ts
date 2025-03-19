@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Team } from '@/app/lib/types';
+import { Team } from '@/lib/types';
 
 interface UseFetchTeamsResult {
   data: Team[] | null;
