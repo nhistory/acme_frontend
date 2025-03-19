@@ -32,7 +32,7 @@ const useFetchTeams = (
     }
 
     let url = `${apiUrl}/team_list/NFL`;
-    if (sortBy && sortBy !== 'None') {
+    if (sortBy && sortBy !== 'Unsorted') {
       url += `?sort_by=${sortBy}`;
     }
 

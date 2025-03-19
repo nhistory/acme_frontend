@@ -109,7 +109,7 @@ const columns: ColumnDef<Team>[] = [
 const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filterValue, setFilterValue] = useState('');
-  const [sortBy, setSortBy] = useState<string>('None');
+  const [sortBy, setSortBy] = useState<string>('Unsorted');
 
   const {
     data: allData,
@@ -164,7 +164,9 @@ const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="None">None</SelectItem>
+              <SelectItem value="Unsorted" aria-label="No sorting">
+                Unsorted
+              </SelectItem>
               <SelectItem value="Name">Name</SelectItem>
               <SelectItem value="Conference">Conference</SelectItem>
               <SelectItem value="Division">Division</SelectItem>

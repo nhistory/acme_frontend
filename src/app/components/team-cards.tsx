@@ -19,7 +19,7 @@ interface TeamCardsProps {
 
 const TeamCards: React.FC<TeamCardsProps> = ({ initialData }) => {
   const [filterValue, setFilterValue] = useState('');
-  const [sortBy, setSortBy] = useState<string | undefined>('None');
+  const [sortBy, setSortBy] = useState<string | undefined>('Unsorted');
 
   const {
     data: allData,
@@ -78,7 +78,9 @@ const TeamCards: React.FC<TeamCardsProps> = ({ initialData }) => {
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="None">None</SelectItem>
+            <SelectItem value="Unsorted" aria-label="No sorting">
+              Unsorted
+            </SelectItem>
             <SelectItem value="Name">Name</SelectItem>
             <SelectItem value="Conference">Conference</SelectItem>
             <SelectItem value="Division">Division</SelectItem>
