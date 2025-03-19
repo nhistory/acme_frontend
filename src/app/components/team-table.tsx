@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import useFetchTeams from '@/app/hooks/use-fetch-teams';
 
 interface TeamTableProps {
   initialData: Team[];
@@ -108,67 +109,26 @@ const columns: ColumnDef<Team>[] = [
 const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filterValue, setFilterValue] = useState('');
-  const [sortBy, setSortBy] = useState<string>('');
-  const [tableData, setTableData] = useState<Team[]>(initialData);
+  const [sortBy, setSortBy] = useState<string>('None');
+
+  const {
+    data: allData,
+    loading,
+    error,
+    fetchData,
+    setExternalSortBy
+  } = useFetchTeams(initialData, sortBy);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const apiKey = process.env.NEXT_PUBLIC_API_KEY;
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    fetchData();
+  }, [fetchData]);
 
-      if (!apiKey) {
-        console.error('API key is not defined in environment variables.');
-        return;
-      }
-      if (!apiUrl) {
-        console.error('API URL is not defined in environment variables.');
-        return;
-      }
-
-      let url = `${apiUrl}/team_list/NFL`;
-      if (sortBy && sortBy !== 'None') {
-        url += `?sort_by=${sortBy}`;
-      }
-
-      try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'X-API-KEY': apiKey,
-            'Content-Type': 'application/json'
-          },
-          cache: 'no-store'
-        });
-
-        if (!response.ok) {
-          let errorMessage = `HTTP error! status: ${response.status}`;
-          if (response.status === 404) {
-            errorMessage = 'NFL team list not found.';
-          } else if (response.status === 401) {
-            errorMessage = 'Unauthorized. Check your API key.';
-          } else if (response.status >= 500) {
-            errorMessage = 'Server error. Please try again later.';
-          }
-          console.error(errorMessage);
-          return;
-        }
-
-        const data: Team[] = await response.json();
-        setTableData(data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    if (sortBy) {
-      fetchData();
-    } else {
-      setTableData(initialData);
-    }
-  }, [sortBy, initialData]);
+  useEffect(() => {
+    setExternalSortBy(sortBy);
+  }, [sortBy, setExternalSortBy]);
 
   const table = useReactTable({
-    data: tableData,
+    data: allData ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -182,6 +142,9 @@ const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
     onGlobalFilterChange: setFilterValue
   });
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <>
       {/* Table */}
@@ -194,17 +157,20 @@ const TeamTable: React.FC<TeamTableProps> = ({ initialData }) => {
           value={filterValue}
           onChange={(event) => setFilterValue(event.target.value)}
         />
-        <Select onValueChange={setSortBy} value={sortBy || ''}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="None">None</SelectItem>
-            <SelectItem value="Name">Name</SelectItem>
-            <SelectItem value="Conference">Conference</SelectItem>
-            <SelectItem value="Division">Division</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center space-x-2">
+          <p className="text-sm font-outfit text-primary-text">Sort by :</p>
+          <Select onValueChange={setSortBy} value={sortBy || ''}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="None">None</SelectItem>
+              <SelectItem value="Name">Name</SelectItem>
+              <SelectItem value="Conference">Conference</SelectItem>
+              <SelectItem value="Division">Division</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>

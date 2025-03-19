@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Team } from '@/app/lib/types';
 import TeamTable from '@/app/components/team-table';
+import TeamCards from '../components/team-cards';
 
 export const metadata: Metadata = {
   title: 'NFL Teams',
@@ -67,13 +68,20 @@ export default async function Page() {
     return (
       <Suspense fallback={<Loading />}>
         <div className="xl:w-[90%] mx-auto">
-          <h1 className="text-2xl font-bold mb-1">NFL Teams</h1>
+          <h1 className="text-lg md:text-2xl font-bold mb-1">NFL Teams</h1>
           <p className="text-sm text-primary-text mb-4">
             View the complete list of NFL teams. Find your favorite teams by
             conference and division. Stay updated with the latest team
             information.
           </p>
-          <TeamTable initialData={teams} />
+          {/* Mobile view only */}
+          <div className="md:hidden">
+            <TeamCards initialData={teams} />
+          </div>
+          {/* Desktop view only */}
+          <div className="hidden md:block">
+            <TeamTable initialData={teams} />
+          </div>
         </div>
       </Suspense>
     );
