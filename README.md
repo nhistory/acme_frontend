@@ -76,8 +76,6 @@ ACME_BACKEND/
 │   └── env.py              # Alembic environment configuration
 │   └── README              # README for migrations
 │   └── script.py.mako      # Alembic script template
-├── venv/                   # Virtual environment (contains project-specific dependencies)
-├── .env                    # Environment variables (e.g., database credentials)
 ├── .env.example            # Template for .env file (shows which variables are needed)
 ├── .gitignore              # Specifies intentionally untracked files that Git should ignore
 ├── .python-version         # Specifies the Python version (likely used by pyenv)
