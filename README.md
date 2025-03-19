@@ -17,6 +17,33 @@ This project is a full-stack web application that displays a dynamic list of NFL
 
 ### Frontend Technology Choices
 
+```
+ACME_FRONTEND/
+├── .husky/               # Husky Git hooks configuration
+│   └── pre-commit        # Pre-commit hook script
+├── src/                  # Source code for the application
+│   ├── app/              # Main application directory (App Router)
+│   │   ├── components/   # Reusable UI components
+│   │   │   ├── footer.tsx     # Footer component
+│   │   │   ├── header.tsx     # Header component
+│   │   │   ├── schema-org.tsx # Component for Schema.org structured data
+│   │   │   ├── team-cards.tsx # Component for displaying team cards
+│   │   │   └── team-table.tsx # Component for displaying a team table
+│   │   ├── hooks/        # Custom React hooks
+│   │   │   └── use-fetch-teams.ts # Custom hook for fetching team data
+│   │   ├── lib/          # Utility functions and shared logic
+│   │   │   └── types.ts       #  TypeScript type definitions.
+│   │   ├── nfl-teams/     # Route segment for NFL teams (e.g., /nfl-teams)
+│   │   │   ├── page.tsx       # Main page component for the /nfl-teams route
+│   │   │   ├── favicon.ico   # Favicon for a specific route (overrides global)
+│   │   │   ├── globals.css   # CSS file that apply only in `nfl-teams` route
+│   │   │   ├── layout.tsx    # Layout component that wrap `nfl-teams` route
+│   │   │   └── page.tsx      #  Default page component for /nfl-teams.
+│   │   ├── components/    #  Components specific to this route segment.
+│   │   └── lib/      # utility functions for specific route
+└──
+```
+
 1. Next.js
 
 - SEO Optimization: Server-side rendering allows search engines to easily crawl content, enhancing SEO which is essential for ACME Sports' first website.
@@ -32,8 +59,35 @@ This project is a full-stack web application that displays a dynamic list of NFL
 - Responsive Design: Built-in responsive utilities make it easy to adapt to various screen sizes.
 - Customizable: Easily extendable to match ACME Sports branding when necessary.
 
-### Backend Technology Choices
+### Backend Technology Choices ([Link](https://github.com/nhistory/ACME_backend))
 
+```
+ACME_BACKEND/
+├── app/                      # Main application code
+│   ├── __pycache__/          # Compiled Python bytecode (do not modify manually)
+│   ├── __init__.py           # Makes the 'app' directory a Python package
+│   ├── database.py         # Database connection and interaction logic
+│   ├── main.py             # Main application entry point (likely where the FastAPI app is defined)
+│   ├── models.py           # Database models (using SQLAlchemy, presumably)
+│   ├── schemas.py          # Pydantic schemas for data validation and serialization
+│   └── seed.py             # Script for seeding the database with initial data
+├── migrations/             # Database migration scripts (managed by Alembic)
+│   ├── __pycache__/
+│   ├── versions/           # Directory containing individual migration scripts
+│   └── env.py              # Alembic environment configuration
+│   └── README              # README for migrations
+│   └── script.py.mako      # Alembic script template
+├── venv/                   # Virtual environment (contains project-specific dependencies)
+├── .env                    # Environment variables (e.g., database credentials)
+├── .env.example            # Template for .env file (shows which variables are needed)
+├── .gitignore              # Specifies intentionally untracked files that Git should ignore
+├── .python-version         # Specifies the Python version (likely used by pyenv)
+├── alembic.ini             # Configuration file for Alembic (database migrations)
+├── docker-compose.yml      # Configuration for running the application with Docker Compose
+├── openapi.yaml            # OpenAPI (Swagger) specification for the API
+├── README.md               # Project description and instructions
+└── requirements.txt        # Project dependencies (list of packages to be installed)
+```
 1. Core Framework: FastAPI
 
 - Performance-Focused: Supports asynchronous processing for high concurrency and fast response times, which is important for delivering NFL team data in real-time.
@@ -149,3 +203,26 @@ This project is a full-stack web application that displays a dynamic list of NFL
 
 - Utilizes Next.js's Incremental Static Regeneration (ISR) to regenerate pages at regular intervals, maintaining fresh data while providing fast page loading.
 - Satisfies both "freshness" and "speed" SEO elements.
+
+
+## Setup
+
+Install nvm
+
+## Getting Started
+
+Install the correct nodejs version
+
+```
+nvm install
+```
+
+Install node modules
+```
+npm install
+```
+
+Start the project
+```
+npm run dev
+```
