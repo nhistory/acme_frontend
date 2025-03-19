@@ -2,7 +2,8 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Team } from '@/app/lib/types';
 import TeamTable from '@/app/components/team-table';
-import TeamCards from '../components/team-cards';
+import TeamCards from '@/app/components/team-cards';
+import SchemaOrg from '@/app/components/schema-org';
 
 export const metadata: Metadata = {
   title: 'NFL Teams',
@@ -65,9 +66,29 @@ export default async function Page() {
   try {
     const teams = await fetchNflTeams();
 
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      itemListElement: teams.map((team, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'SportsOrganization',
+          name: team.name,
+          address: {
+            '@type': 'PostalAddress'
+          },
+          sport: 'American Football'
+        }
+      }))
+    };
+
     return (
       <Suspense fallback={<Loading />}>
         <div className="xl:w-[90%] mx-auto">
+          <head>
+            <SchemaOrg schema={schema} />
+          </head>
           <h1 className="text-lg md:text-2xl font-bold mb-1">NFL Teams</h1>
           <p className="text-sm text-primary-text mb-4">
             View the complete list of NFL teams. Find your favorite teams by
