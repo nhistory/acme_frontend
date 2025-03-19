@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
   ColumnDef,
@@ -6,7 +8,8 @@ import {
   getPaginationRowModel,
   useReactTable,
   getSortedRowModel,
-  SortingState
+  SortingState,
+  getFilteredRowModel
 } from '@tanstack/react-table';
 import {
   Table,
@@ -25,9 +28,34 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Team } from '@/app/lib/types';
+import { Input } from '@/components/ui/input';
 
 // Define the columns for the table
 const columns: ColumnDef<Team>[] = [
+  {
+    accessorKey: 'name',
+    header: ({ column }) => {
+      // Make header sortable
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <div className="w-[150px] pl-3">{row.getValue('name')}</div>
+    ),
+    // Add filter function
+    filterFn: (row, id, filterValue) => {
+      return (row.getValue(id) as string)
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    }
+  },
   {
     accessorKey: 'display_name',
     header: ({ column }) => {
@@ -63,29 +91,12 @@ const columns: ColumnDef<Team>[] = [
     cell: ({ row }) => (
       <div className="w-[30%] pl-4">{row.getValue('nickname')}</div>
     )
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      // Make header sortable
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="w-[150px] pl-3">{row.getValue('name')}</div>
-    )
   }
 ];
 
 const TeamTable = ({ data }: { data: Team[] }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [filterValue, setFilterValue] = useState('');
 
   const table = useReactTable({
     data,
@@ -94,13 +105,26 @@ const TeamTable = ({ data }: { data: Team[] }) => {
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
-      sorting
-    }
+      sorting,
+      globalFilter: filterValue
+    },
+    onGlobalFilterChange: setFilterValue
   });
 
   return (
-    <div className="xl:w-[90%] mx-auto">
+    <>
+      {/* Table */}
+      <div className="w-[30%] mr-auto mb-2">
+        <Input
+          id="teamSearch"
+          name="teamSearch"
+          placeholder="Search teams"
+          value={filterValue}
+          onChange={(event) => setFilterValue(event.target.value)}
+        />
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader className="bg-[#F9F9F9] h-14">
@@ -207,7 +231,7 @@ const TeamTable = ({ data }: { data: Team[] }) => {
           </Button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
