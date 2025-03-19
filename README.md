@@ -40,7 +40,6 @@ ACME_FRONTEND/
 │   │   │   ├── layout.tsx    # Layout component that wrap `nfl-teams` route
 │   │   │   └── page.tsx      #  Default page component for /nfl-teams.
 │   │   ├── components/    #  Components specific for shadcn UI.
-│   │   └── lib/      # utility functions for specific route
 └──
 ```
 
