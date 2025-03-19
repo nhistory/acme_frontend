@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-
-interface Team {
-  id: string;
-  name: string;
-  nickname: string;
-  display_name: string;
-}
+import { Team } from '@/app/lib/types';
+import TeamTable from '../components/team-table';
 
 const NflTeams = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -78,20 +73,7 @@ const NflTeams = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  return (
-    <div>
-      <h1 className="font-bold text-2xl mb-6">NFL Teams</h1>
-      {teams.length > 0 ? (
-        <ul>
-          {teams.map((team, index) => (
-            <li key={index}>{team.name ? team.name : `Team ${index + 1}`} </li>
-          ))}
-        </ul>
-      ) : (
-        <div>No NFL teams found.</div>
-      )}
-    </div>
-  );
+  return <TeamTable data={teams} />;
 };
 
 export default NflTeams;
